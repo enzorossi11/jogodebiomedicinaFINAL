@@ -13,8 +13,8 @@ Quadro de tarefas operacionais, melhorias e débitos técnicos do projeto.
 
 ### Qualidade e Desempenho
 - [ ] **PERF-01:** Auditar descarte de instâncias Three.js (`dispose()` em geometrias, materiais e texturas) nas trocas de tela da Proposta 1 e Proposta 2.
-- [ ] **PERF-02:** Otimizar `vite.config.ts` substituindo `__dirname` por `import.meta.dirname` para conformidade com futuras versões do Vite.
-- [ ] **PERF-03:** Configurar chunk splitting no Rollup/Vite para pacotes acima de 500 kB (Three.js e Lucide).
+- [x] **PERF-02:** Otimizar `vite.config.ts` substituindo `__dirname` por `import.meta.dirname` para conformidade com futuras versões do Vite.
+- [x] **PERF-03:** Configurar chunk splitting no Rollup/Vite para pacotes acima de 500 kB (Three.js e Lucide).
 
 ### Acessibilidade e Interação
 - [ ] **A11Y-01:** Adicionar suporte a navegação completa via teclado (Tab e Enter) em todas as estações do modelo 3D.
@@ -29,3 +29,4 @@ Quadro de tarefas operacionais, melhorias e débitos técnicos do projeto.
 - [x] Resolução de conflito de dependências entre `vite` e `esbuild` com `--legacy-peer-deps`.
 - [x] Validação do build de produção (`npm run build`) com sucesso em 608ms.
 - [x] Criação de `AGENTS.md`, `ROADMAP.md` e esqueleto de documentação `docs/`.
+
