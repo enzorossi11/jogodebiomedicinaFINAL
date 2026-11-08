@@ -17,3 +17,4 @@ Este diretório armazena os **Architectural Decision Records** (ADRs) do projeto
 2. Nomeie o novo arquivo seguindo o padrão numérico sequencial: `000X-nome-sucinto.md`.
 3. Preencha todas as seções (Contexto, Decisão Tomada e Consequências).
 4. Adicione o link para a nova decisão na lista acima.
+

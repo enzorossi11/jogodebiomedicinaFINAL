@@ -22,3 +22,4 @@ Planejamento de evolução da plataforma educacional inclusiva de fisiologia hum
 - [ ] Alinhamento com kits físicos pedagógicos (peças táteis 3D impressas e cartões de CAA impressos).
 - [ ] Testes de usabilidade supervisionados com crianças neurodivergentes e profissionais de saúde/educação (FMU BioDesign).
 - [ ] Internacionalização de idiomas (suporte inicial a Inglês e Espanhol mantendo a síntese de voz local).
+

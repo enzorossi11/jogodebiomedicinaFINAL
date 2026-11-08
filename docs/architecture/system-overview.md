@@ -81,3 +81,4 @@ A plataforma não utiliza wrappers que criam sobrecarga no React reconciler (com
 
 - **Sem backdrop-filter em sobreposição:** A barra superior e os docks usam cores sólidas (`bg-white`, `bg-slate-900`) para evitar o peso do blur sobre GPUs integradas de tablets escolares.
 - **Escalabilidade Tipográfica:** Controle de tamanho de texto dinâmico nas classes Tailwind (`text-sm`, `text-base`, `text-lg`), garantindo legibilidade para usuários com baixa visão ou dislexia.
+

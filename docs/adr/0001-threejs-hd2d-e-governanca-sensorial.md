@@ -36,3 +36,4 @@ Modelos 3D puramente realistas ou hiper-detalhados podem ser visualmente aversiv
 - **Negativas / Riscos:**
   - Gerenciamento manual do ciclo de vida dos objetos Three.js (`dispose`) requerido em cada componente para evitar vazamento de memória WebGL.
   - Necessidade de manter compatibilidade de peer dependencies entre Vite e esbuild.
+

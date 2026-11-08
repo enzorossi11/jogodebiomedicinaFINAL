@@ -8,3 +8,4 @@ Ao editar ou criar telas, componentes visuais ou cenas 3D no repositório:
 4. **Mantenha o botão "Observar sem tocar" em toda animação biológica.**
 5. **Nunca use cores vermelhas punitivas ou sons de erro estilo "buzzer".**
 6. **Sempre limpe recursos Three.js (`dispose()`) no retorno dos hooks `useEffect`.**
+

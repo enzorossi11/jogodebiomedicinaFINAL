@@ -116,3 +116,4 @@ interface AppGlobalState {
   scriptModalOpen: boolean;
 }
 ```
+

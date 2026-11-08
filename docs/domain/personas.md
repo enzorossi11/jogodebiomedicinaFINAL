@@ -35,3 +35,4 @@ Este documento descreve os principais perfis de usuários atendidos pelo projeto
   - Acesso ao modal **Roteiro Pedagógico e Científico**, com matriz curricular de biomedicina e passos didáticos estruturados.
   - Suporte a telas de toque e botões grandes com alto contraste e tipografia ajustável (Normal, Grande, Extra Grande).
   - Material alinhado com atividades táteis presenciais (cartões CAA impressos e réplicas anatômicas).
+

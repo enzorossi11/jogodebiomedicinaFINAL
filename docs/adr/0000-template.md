@@ -20,3 +20,4 @@ Qual caminho foi escolhido e por quê? Quais alternativas foram descartadas?
 - **Positivas:** Ganhos operacionais, de clareza, desempenho ou acessibilidade.
 - **Negativas / Riscos:** Débito técnico introduzido, novas dependências ou complexidade adicional.
 - **Mitigações:** Medidas adotadas para minimizar os riscos identificados.
+

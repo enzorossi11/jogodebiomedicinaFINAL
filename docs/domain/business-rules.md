@@ -58,3 +58,4 @@ Cada alimento selecionado na tela inicial altera os diálogos e destaques bioló
 
 ### RN-D02: Áudio em Frequência Harmoniosa
 - Sfx de sucesso ou confirmação utilizam frequências suaves (528 Hz - frequência do tom do amor/calma) ou acordes pentatônicos sem ataque percussivo brusco.
+

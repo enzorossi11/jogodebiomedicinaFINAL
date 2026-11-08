@@ -36,3 +36,4 @@ Termos fundamentais das áreas de **Biomedicina**, **Pedagogia Inclusiva**, **Ac
 - **HD-2D:** Estilo visual que mescla cenários e órgãos anatômicos tridimensionais (renderizados com Three.js e iluminação PBR) com sprites em pixel art 16-bit com recorte alfa nítido (`NearestFilter`).
 - **InstancedMesh:** Técnica no Three.js para renderizar centenas ou milhares de geometrias idênticas (como as vilosidades intestinais) em uma única chamada de desenho (draw call), preservando o desempenho de GPU em dispositivos móveis.
 - **PBR (Physically Based Rendering):** Modelo de sombreamento que simula a física real de reflexão e dispersão de luz em materiais anatômicos, conferindo profundidade sem necessidade de iluminação estroboscópica.
+
