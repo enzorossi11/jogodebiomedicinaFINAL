@@ -29,6 +29,8 @@ import {
   Users
 } from 'lucide-react';
 
+import { ASSET_CATALOG } from '../data/assetCatalog';
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -36,7 +38,7 @@ interface ModalProps {
 
 type ModalTab = 'validacao' | 'multidisciplinar' | 'presencial' | 'roteiro';
 
-const PDF_ASSET_PATH = '/assets/aistudio/PROJETO_CONHECENDO_MEU_CORPO_POR_58abb34b.pdf';
+const PDF_ASSET_PATH = ASSET_CATALOG.docs.pdfProjeto;
 
 export const PedagogicalScriptModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [copied, setCopied] = useState<boolean>(false);

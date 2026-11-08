@@ -10,14 +10,15 @@
  */
 
 import * as THREE from 'three';
+import { ASSET_CATALOG, getAssetPath } from '../../data/assetCatalog';
 
 export const UPLOADED_16BIT_ASSETS = {
-  apple: '/assets/aistudio/16-bit_apple_game_asset_20261020204251_f00e3ed8.jpg',
-  bread: '/assets/aistudio/Make_sliced_loaf_of_bread_20261020204251_d2b5d8e5.jpg',
-  carrot: '/assets/aistudio/Create_a_carrot_20261020204251_440611fe.jpg',
-  drop: '/assets/aistudio/Create_a_saliva_drop_20261020204251_807481a6.jpg',
-  esophagusTube: '/assets/aistudio/Creating_esophagus_game_environment_20261020204251_1988dd9b.jpg',
-  esophagusWall: '/assets/aistudio/Criar_es_fago_estilo_game_20261020204251_193662d4.jpg'
+  apple: getAssetPath(ASSET_CATALOG.foods.apple),
+  bread: getAssetPath(ASSET_CATALOG.foods.bread),
+  carrot: getAssetPath(ASSET_CATALOG.foods.carrot),
+  drop: getAssetPath(ASSET_CATALOG.fluids.saliva),
+  esophagusTube: getAssetPath(ASSET_CATALOG.organs.esophagusTube),
+  esophagusWall: getAssetPath(ASSET_CATALOG.textures3D.esophagusMucosa)
 } as const;
 
 const cutoutCanvasCache = new Map<string, Promise<HTMLCanvasElement>>();
@@ -54,6 +55,11 @@ export async function getCutoutSpriteCanvas(
 
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(img, 0, 0, targetSize, targetSize);
+
+    // Se o asset for nativamente transparente (PNG/SVG), não precisa de flood-fill de remoção de fundo
+    if (src.toLowerCase().endsWith('.png') || src.toLowerCase().endsWith('.svg') || src.startsWith('data:image/png')) {
+      return canvas;
+    }
 
     const imgData = ctx.getImageData(0, 0, targetSize, targetSize);
     const data = imgData.data;

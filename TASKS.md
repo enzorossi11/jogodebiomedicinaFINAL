@@ -29,4 +29,6 @@ Quadro de tarefas operacionais, melhorias e débitos técnicos do projeto.
 - [x] Resolução de conflito de dependências entre `vite` e `esbuild` com `--legacy-peer-deps`.
 - [x] Validação do build de produção (`npm run build`) com sucesso em 608ms.
 - [x] Criação de `AGENTS.md`, `ROADMAP.md` e esqueleto de documentação `docs/`.
+- [x] **ASSETS-01:** Reestruturação da arquitetura de pastas de assets (`public/assets/2d/`, `3d/`, `docs/`) e remoção da pasta legada `aistudio`.
+- [x] **ASSETS-02:** Criação do catálogo canônico tipado [src/data/assetCatalog.ts](file:///c:/Users/bruno/OneDrive/Área%20de%20Trabalho/jogodebiomedicina/src/data/assetCatalog.ts) e inventário de controle [docs/assets-inventory.md](file:///c:/Users/bruno/OneDrive/Área%20de%20Trabalho/jogodebiomedicina/docs/assets-inventory.md).
 
