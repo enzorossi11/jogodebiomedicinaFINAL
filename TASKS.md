@@ -12,13 +12,14 @@ Quadro de tarefas operacionais, melhorias e débitos técnicos do projeto.
 ## A Fazer (To Do)
 
 ### Qualidade e Desempenho
-- [ ] **PERF-01:** Auditar descarte de instâncias Three.js (`dispose()` em geometrias, materiais e texturas) nas trocas de tela da Proposta 1 e Proposta 2.
+- [x] **PERF-01:** Modularizar o monólito Three.js (`Proposta1HD2DScene3D.tsx`) em 9 submódulos dedicados em `src/components/three/stations/`.
 - [x] **PERF-02:** Otimizar `vite.config.ts` substituindo `__dirname` por `import.meta.dirname` para conformidade com futuras versões do Vite.
 - [x] **PERF-03:** Configurar chunk splitting no Rollup/Vite para pacotes acima de 500 kB (Three.js e Lucide).
 
 ### Acessibilidade e Interação
 - [ ] **A11Y-01:** Adicionar suporte a navegação completa via teclado (Tab e Enter) em todas as estações do modelo 3D.
-- [ ] **A11Y-02:** Implementar legendas sincronizadas em tela durante a leitura por áudio do narrador calmo.
+- [x] **A11Y-02:** Implementar legendas sincronizadas em tela durante a leitura por áudio do narrador calmo (`ClosedCaptionBanner.tsx`).
+- [x] **A11Y-03:** Persistência de preferências de acessibilidade (`lowSensory`, `isMuted`, `fontSize`) no `localStorage`.
 
 ### Conteúdo Pedagógico
 - [ ] **PEDAG-01:** Adicionar feedback visual sobre a digestão de água no intestino grosso para o alimento "Cenoura".

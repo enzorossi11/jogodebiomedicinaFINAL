@@ -67,3 +67,4 @@ export const ClosedCaptionBanner: React.FC<ClosedCaptionBannerProps> = ({ fontSi
     </aside>
   );
 };
+

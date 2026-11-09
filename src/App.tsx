@@ -9,16 +9,42 @@
  * - Espaço de Pausa Tranquila ("Quero uma pausa") e Validação Científica / Guia Presencial
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FoodOption, FOOD_OPTIONS } from './components/FoodSelector';
 import { Proposta1Viagem3D, Proposta1Stage } from './components/Proposta1Viagem3D';
 import { StageProgressBar, ActiveScreen } from './components/StageProgressBar';
 import { Proposta2Interocepcao } from './components/Proposta2Interocepcao';
 import { SensoryPauseOverlay } from './components/SensoryPauseOverlay';
 import { PedagogicalScriptModal } from './components/PedagogicalScriptModal';
+import { ClosedCaptionBanner } from './components/ClosedCaptionBanner';
 import { PROJETO_PILARES, CUIDADOS_IMPORTANTES_CHECKLIST } from './data/scriptData';
 import { PixelApple, PixelBread, PixelCarrot, PixelEgg } from './components/PixelArtAssets';
 import { calmAudio, CalmVoiceNarrator } from './utils/audioSystem';
+
+const STORAGE_PREFS_KEY = 'conhecendo_meu_corpo_prefs_v1';
+
+interface StoredPreferences {
+  lowSensory: boolean;
+  isMuted: boolean;
+  fontSize: 'normal' | 'large' | 'xlarge';
+}
+
+function getStoredPreferences(): StoredPreferences {
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        lowSensory: Boolean(parsed.lowSensory),
+        isMuted: Boolean(parsed.isMuted),
+        fontSize: ['normal', 'large', 'xlarge'].includes(parsed.fontSize) ? parsed.fontSize : 'normal'
+      };
+    }
+  } catch {
+    // Ignorado em ambientes restritos de cookies/localStorage
+  }
+  return { lowSensory: false, isMuted: false, fontSize: 'normal' };
+}
 import {
   Volume2,
   VolumeX,
@@ -36,17 +62,51 @@ import {
 type ActiveModule = 'hub' | 'proposta_1' | 'proposta_2';
 
 export default function App() {
+  const [initialPrefs] = useState<StoredPreferences>(getStoredPreferences);
+
   const [activeModule, setActiveModule] = useState<ActiveModule>('hub');
   const [p1Screen, setP1Screen] = useState<Proposta1Stage>('food_select');
   const [selectedFood, setSelectedFood] = useState<FoodOption>(FOOD_OPTIONS[0]); // Maçã
 
-  const [lowSensory, setLowSensory] = useState<boolean>(false);
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [lowSensory, setLowSensory] = useState<boolean>(initialPrefs.lowSensory);
+  const [isMuted, setIsMuted] = useState<boolean>(initialPrefs.isMuted);
   const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
+  const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>(initialPrefs.fontSize);
 
   const [sensoryPauseOpen, setSensoryPauseOpen] = useState<boolean>(false);
   const [scriptModalOpen, setScriptModalOpen] = useState<boolean>(false);
+
+  // Sincroniza estado de mudo com o CalmMiniAudio na inicialização
+  useEffect(() => {
+    calmAudio.setMuted(isMuted);
+  }, []);
+
+  // Persiste preferências do usuário em localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_PREFS_KEY,
+        JSON.stringify({ lowSensory, isMuted, fontSize })
+      );
+    } catch {
+      // Ignora erro de cota ou navegação anônima restritiva
+    }
+  }, [lowSensory, isMuted, fontSize]);
+
+  // Destravamento silencioso do AudioContext no primeiro toque/clique global
+  useEffect(() => {
+    const unlock = () => {
+      calmAudio.unlock();
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('pointerdown', unlock, { passive: true });
+    window.addEventListener('keydown', unlock, { passive: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
 
   const toggleMute = () => {
     const next = !isMuted;
@@ -475,6 +535,9 @@ export default function App() {
         isOpen={scriptModalOpen}
         onClose={() => setScriptModalOpen(false)}
       />
+
+      {/* 7. FAIXA DE LEGENDA ACOLHEDORA EM TEMPO REAL (CLOSED CAPTION) */}
+      <ClosedCaptionBanner fontSize={fontSize} />
     </div>
   );
 }
