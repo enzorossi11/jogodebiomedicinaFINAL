@@ -147,8 +147,8 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     renderer.domElement.addEventListener('webglcontextrestored', onContextRestored);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf1f5f9);
-    scene.fog = new THREE.Fog(0xf1f5f9, 6.5, 16);
+    scene.background = new THREE.Color(0xf5efeb);
+    scene.fog = new THREE.Fog(0xf5efeb, 7.5, 20);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
     const envMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -171,12 +171,12 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
       camAnimRef.current.animating = false;
     });
 
-    // Iluminação de Estúdio 3 Pontos (Quente / Fria)
-    const hemi = new THREE.HemisphereLight(0xe0f2fe, 0xcbd5e1, 0.8);
+    // Iluminação de Estúdio 3 Pontos (Paleta Sensorial Acolhedora — 3200K)
+    const hemi = new THREE.HemisphereLight(0xffedd5, 0xe2d5c5, 0.95);
     hemi.position.set(0, 8, 0);
     scene.add(hemi);
 
-    const keyLight = new THREE.DirectionalLight(0xfffbeb, 1.35);
+    const keyLight = new THREE.DirectionalLight(0xfff7ed, 1.25);
     keyLight.position.set(2.8, 4.4, 3.2);
     if (!isSoftwareGl) {
       keyLight.castShadow = true;
@@ -193,11 +193,11 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     }
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xe0f2fe, 0.55);
+    const fillLight = new THREE.DirectionalLight(0xfef3c7, 0.45);
     fillLight.position.set(-3.0, 2.2, 2.0);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0x99f6e4, 0.65);
+    const rimLight = new THREE.DirectionalLight(0xa7f3d0, 0.45);
     rimLight.position.set(0, 2.8, -3.2);
     scene.add(rimLight);
 
@@ -215,13 +215,13 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
       return m;
     };
 
-    // Base / Pedestal de Estúdio Comum
+    // Base / Pedestal de Estúdio Orgânico Acolhedor
     const baseGroup = new THREE.Group();
     scene.add(baseGroup);
 
     const floorMesh = new THREE.Mesh(
       trackGeo(new THREE.CircleGeometry(9, 48)).rotateX(-Math.PI / 2),
-      trackMat(new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.92, metalness: 0.02 }))
+      trackMat(new THREE.MeshStandardMaterial({ color: 0xd6c7b6, roughness: 0.88, metalness: 0.02 }))
     );
     floorMesh.position.y = -0.08;
     floorMesh.receiveShadow = true;
@@ -231,10 +231,10 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
       trackGeo(new THREE.CylinderGeometry(1.42, 1.52, 0.08, 56)),
       trackMat(
         new THREE.MeshPhysicalMaterial({
-          color: 0xffffff,
-          roughness: 0.35,
-          metalness: 0.06,
-          clearcoat: 0.35
+          color: 0xf3ede3,
+          roughness: 0.42,
+          metalness: 0.04,
+          clearcoat: 0.25
         })
       )
     );
@@ -244,7 +244,7 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
 
     const pedestalTrim = new THREE.Mesh(
       trackGeo(new THREE.TorusGeometry(1.45, 0.016, 14, 64)).rotateX(Math.PI / 2),
-      trackMat(new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.3, metalness: 0.7 }))
+      trackMat(new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.35, metalness: 0.3 }))
     );
     pedestalTrim.position.y = -0.004;
     baseGroup.add(pedestalTrim);
@@ -319,10 +319,10 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     // Materiais PBR Orgânicos Compartilhados
     const sharedMaterials: SharedMaterials = {
       porcelainMat: trackMat(
-        new THREE.MeshPhysicalMaterial({ color: 0xf8fafc, roughness: 0.22, clearcoat: 0.6 })
+        new THREE.MeshPhysicalMaterial({ color: 0xfefcf8, roughness: 0.24, clearcoat: 0.5 })
       ),
       woodTableMat: trackMat(
-        new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.65, metalness: 0.05 })
+        new THREE.MeshStandardMaterial({ color: 0x9c6644, roughness: 0.65, metalness: 0.04 })
       ),
       bolusGoldMat: trackMat(
         new THREE.MeshStandardMaterial({
@@ -480,8 +480,8 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
         simTime += dt;
       }
 
-      // Fundo calmo sincronizado com Baixo Estímulo
-      _bgColor.set(cur.lowSensory ? '#E2E8F0' : '#F1F5F9');
+      // Fundo calmo sincronizado com Baixo Estímulo (Opção A - Cozinha & Estúdio Acolhedor)
+      _bgColor.set(cur.lowSensory ? '#EDE4DA' : '#F5EFEB');
       (scene.background as THREE.Color).lerp(_bgColor, 0.1);
       if (scene.fog) {
         scene.fog.color.copy(scene.background as THREE.Color);

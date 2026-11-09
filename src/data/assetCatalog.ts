@@ -12,6 +12,7 @@ export interface AssetEntry {
   fallbackPath: string;
   isNativeAlpha: boolean;
   label: string;
+  hasOfficial?: boolean;
 }
 
 export const ASSET_CATALOG = {
@@ -128,6 +129,7 @@ export const ASSET_CATALOG = {
       officialPath: '/assets/2d/organs-hud/organ-esophagus.png',
       fallbackPath: '/assets/2d/organs-hud/esophagus-tube-test.jpg',
       isNativeAlpha: false,
+      hasOfficial: false,
       label: 'Tubo do Esôfago 16-Bit'
     }
   },
@@ -139,6 +141,7 @@ export const ASSET_CATALOG = {
       officialPath: '/assets/3d/textures/esophagus-mucosa.png',
       fallbackPath: '/assets/3d/textures/esophagus-mucosa-test.jpg',
       isNativeAlpha: true,
+      hasOfficial: false,
       label: 'Textura Mucosa Esofágica'
     }
   },
@@ -151,8 +154,11 @@ export const ASSET_CATALOG = {
 
 /**
  * Retorna o melhor caminho disponível para o asset, usando o oficial
- * prioritariamente e o fallback temporário se necessário.
+ * prioritariamente se disponível e o fallback se o oficial ainda não existir.
  */
-export function getAssetPath(asset: { officialPath: string; fallbackPath?: string }): string {
+export function getAssetPath(asset: { officialPath: string; fallbackPath?: string; hasOfficial?: boolean }): string {
+  if (asset.hasOfficial === false && asset.fallbackPath) {
+    return asset.fallbackPath;
+  }
   return asset.officialPath || asset.fallbackPath || '';
 }

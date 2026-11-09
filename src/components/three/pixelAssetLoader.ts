@@ -36,6 +36,10 @@ const cutoutCanvasCache = new Map<string, Promise<HTMLCanvasElement>>();
 
 function loadHtmlImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
+    if (!src) {
+      reject(new Error('Fonte de imagem vazia'));
+      return;
+    }
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
@@ -45,19 +49,79 @@ function loadHtmlImage(src: string): Promise<HTMLImageElement> {
 }
 
 /**
+ * Cria um canvas procedural de segurança para evitar texturas em branco caso
+ * algum arquivo de imagem não seja encontrado ou falhe na rede.
+ */
+export function createProceduralFallbackCanvas(
+  label: string,
+  color = '#10b981',
+  size = 256
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+
+  ctx.imageSmoothingEnabled = false;
+
+  // Borda pixel art suave
+  const pad = 24;
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(pad - 4, pad - 4, size - (pad - 4) * 2, size - (pad - 4) * 2);
+
+  // Preenchimento com a cor tema do nutriente/alimento
+  ctx.fillStyle = color;
+  ctx.fillRect(pad, pad, size - pad * 2, size - pad * 2);
+
+  // Texto amigável centralizado
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label.slice(0, 10), size / 2, size / 2);
+
+  return canvas;
+}
+
+/**
  * Remove o fundo cinza neutro sólido conectado às bordas da imagem via BFS Flood-Fill,
  * mantendo intactas todas as cores e contornos internos do sprite 16-bit.
+ * Inclui tratamento com fallback automático e canvas procedural de emergência.
  */
 export async function getCutoutSpriteCanvas(
   src: string,
-  targetSize = 256
+  targetSize = 256,
+  fallbackSrc?: string,
+  label = 'Asset',
+  fallbackColor = '#10b981'
 ): Promise<HTMLCanvasElement> {
-  const cacheKey = `${src}::${targetSize}`;
+  const cacheKey = `${src}::${targetSize}::${fallbackSrc ?? ''}`;
   const cached = cutoutCanvasCache.get(cacheKey);
   if (cached) return cached;
 
-  const promise = (async () => {
-    const img = await loadHtmlImage(src);
+  const promise = (async (): Promise<HTMLCanvasElement> => {
+    let img: HTMLImageElement | null = null;
+    let actualSrc = src;
+
+    try {
+      img = await loadHtmlImage(src);
+    } catch {
+      if (fallbackSrc && fallbackSrc !== src) {
+        try {
+          img = await loadHtmlImage(fallbackSrc);
+          actualSrc = fallbackSrc;
+        } catch {
+          // Ambos falharam
+        }
+      }
+    }
+
+    if (!img) {
+      console.warn(`[pixelAssetLoader] Usando fallback procedural para: "${label}" (${src})`);
+      return createProceduralFallbackCanvas(label, fallbackColor, targetSize);
+    }
+
     const canvas = document.createElement('canvas');
     canvas.width = targetSize;
     canvas.height = targetSize;
@@ -68,7 +132,7 @@ export async function getCutoutSpriteCanvas(
     ctx.drawImage(img, 0, 0, targetSize, targetSize);
 
     // Se o asset for nativamente transparente (PNG/SVG), não precisa de flood-fill de remoção de fundo
-    if (src.toLowerCase().endsWith('.png') || src.toLowerCase().endsWith('.svg') || src.startsWith('data:image/png')) {
+    if (actualSrc.toLowerCase().endsWith('.png') || actualSrc.toLowerCase().endsWith('.svg') || actualSrc.startsWith('data:image/png')) {
       return canvas;
     }
 
@@ -247,12 +311,47 @@ export function createPixelEggCutoutTexture(bitten = false): THREE.CanvasTexture
 
 /**
  * Carrega a textura muscular interna 16-bit do esôfago para mapear no cilindro/túnel 3D.
+ * Possui fallback automático e textura procedural de emergência.
  */
 export async function loadEsophagusWallTexture(
   renderer: THREE.WebGLRenderer
 ): Promise<THREE.Texture> {
-  const img = await loadHtmlImage(UPLOADED_16BIT_ASSETS.esophagusWall);
-  const tex = new THREE.Texture(img);
+  let img: HTMLImageElement | null = null;
+  const primarySrc = UPLOADED_16BIT_ASSETS.esophagusWall;
+  const fallbackSrc = ASSET_CATALOG.textures3D.esophagusMucosa.fallbackPath;
+
+  try {
+    img = await loadHtmlImage(primarySrc);
+  } catch {
+    if (fallbackSrc && fallbackSrc !== primarySrc) {
+      try {
+        img = await loadHtmlImage(fallbackSrc);
+      } catch {
+        // Falha no fallback
+      }
+    }
+  }
+
+  let tex: THREE.Texture;
+  if (img) {
+    tex = new THREE.Texture(img);
+  } else {
+    // Textura procedural suave em tons de mucosa rosa/rubi
+    const c = document.createElement('canvas');
+    c.width = 128;
+    c.height = 128;
+    const ctx = c.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = '#be123c';
+      ctx.fillRect(0, 0, 128, 128);
+      ctx.fillStyle = '#fb7185';
+      for (let y = 0; y < 128; y += 16) {
+        ctx.fillRect(0, y, 128, 8);
+      }
+    }
+    tex = new THREE.CanvasTexture(c);
+  }
+
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
@@ -288,7 +387,7 @@ export interface LoadedHD2DAssetPack {
 }
 
 /**
- * Carrega em paralelo todos os assets 16-bit oficiais das seções A e B prontos para uso no Three.js.
+ * Carrega em paralelo todos os assets 16-bit oficiais com resiliência total a falhas.
  */
 export async function loadAllProposta1HD2DAssets(
   renderer: THREE.WebGLRenderer
@@ -311,21 +410,21 @@ export async function loadAllProposta1HD2DAssets(
     esoTubeCanvas,
     esoWallTex
   ] = await Promise.all([
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.apple, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.appleBitten, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.bread, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.breadBitten, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrot, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrotBitten, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.egg, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.eggBitten, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.salivaDrop, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.gastricDrop, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.waterDrop, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientEnergy, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientProtein, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientVitamin, 256),
-    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.esophagusTube, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.apple, 256, ASSET_CATALOG.foods.apple.fallbackPath, 'Maçã', '#ef4444'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.appleBitten, 256, ASSET_CATALOG.foods.appleBitten.fallbackPath, 'Maçã', '#ef4444'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.bread, 256, ASSET_CATALOG.foods.bread.fallbackPath, 'Pão', '#d97706'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.breadBitten, 256, ASSET_CATALOG.foods.breadBitten.fallbackPath, 'Pão', '#d97706'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrot, 256, ASSET_CATALOG.foods.carrot.fallbackPath, 'Cenoura', '#f97316'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrotBitten, 256, ASSET_CATALOG.foods.carrotBitten.fallbackPath, 'Cenoura', '#f97316'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.egg, 256, ASSET_CATALOG.foods.egg.fallbackPath, 'Ovo', '#f59e0b'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.eggBitten, 256, ASSET_CATALOG.foods.eggBitten.fallbackPath, 'Ovo', '#f59e0b'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.salivaDrop, 256, ASSET_CATALOG.fluids.saliva.fallbackPath, 'Saliva', '#38bdf8'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.gastricDrop, 256, ASSET_CATALOG.fluids.gastric.fallbackPath, 'Gástrico', '#10b981'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.waterDrop, 256, ASSET_CATALOG.fluids.water.fallbackPath, 'Água', '#60a5fa'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientEnergy, 256, ASSET_CATALOG.fluids.nutrientEnergy.fallbackPath, 'Energia', '#facc15'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientProtein, 256, ASSET_CATALOG.fluids.nutrientProtein.fallbackPath, 'Proteína', '#818cf8'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientVitamin, 256, ASSET_CATALOG.fluids.nutrientVitamin.fallbackPath, 'Vitamina', '#34d399'),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.esophagusTube, 256, ASSET_CATALOG.organs.esophagusTube.fallbackPath, 'Esôfago', '#fb7185'),
     loadEsophagusWallTexture(renderer)
   ]);
 
