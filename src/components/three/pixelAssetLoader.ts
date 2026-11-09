@@ -14,8 +14,19 @@ import { ASSET_CATALOG, getAssetPath } from '../../data/assetCatalog';
 
 export const UPLOADED_16BIT_ASSETS = {
   apple: getAssetPath(ASSET_CATALOG.foods.apple),
+  appleBitten: getAssetPath(ASSET_CATALOG.foods.appleBitten),
   bread: getAssetPath(ASSET_CATALOG.foods.bread),
+  breadBitten: getAssetPath(ASSET_CATALOG.foods.breadBitten),
   carrot: getAssetPath(ASSET_CATALOG.foods.carrot),
+  carrotBitten: getAssetPath(ASSET_CATALOG.foods.carrotBitten),
+  egg: getAssetPath(ASSET_CATALOG.foods.egg),
+  eggBitten: getAssetPath(ASSET_CATALOG.foods.eggBitten),
+  salivaDrop: getAssetPath(ASSET_CATALOG.fluids.saliva),
+  gastricDrop: getAssetPath(ASSET_CATALOG.fluids.gastric),
+  waterDrop: getAssetPath(ASSET_CATALOG.fluids.water),
+  nutrientEnergy: getAssetPath(ASSET_CATALOG.fluids.nutrientEnergy),
+  nutrientProtein: getAssetPath(ASSET_CATALOG.fluids.nutrientProtein),
+  nutrientVitamin: getAssetPath(ASSET_CATALOG.fluids.nutrientVitamin),
   drop: getAssetPath(ASSET_CATALOG.fluids.saliva),
   esophagusTube: getAssetPath(ASSET_CATALOG.organs.esophagusTube),
   esophagusWall: getAssetPath(ASSET_CATALOG.textures3D.esophagusMucosa)
@@ -260,6 +271,16 @@ export interface LoadedHD2DAssetPack {
     cenoura: { whole: THREE.CanvasTexture; bitten: THREE.CanvasTexture };
     ovo: { whole: THREE.CanvasTexture; bitten: THREE.CanvasTexture };
   };
+  drops: {
+    saliva: THREE.CanvasTexture;
+    gastric: THREE.CanvasTexture;
+    water: THREE.CanvasTexture;
+  };
+  nutrients: {
+    energy: THREE.CanvasTexture;
+    protein: THREE.CanvasTexture;
+    vitamin: THREE.CanvasTexture;
+  };
   drop: THREE.CanvasTexture;
   esophagusTube: THREE.CanvasTexture;
   esophagusWall: THREE.Texture;
@@ -267,41 +288,81 @@ export interface LoadedHD2DAssetPack {
 }
 
 /**
- * Carrega em paralelo todos os 6 assets 16-bit enviados + Ovo 16-bit, prontos para uso na cena Three.js.
+ * Carrega em paralelo todos os assets 16-bit oficiais das seções A e B prontos para uso no Three.js.
  */
 export async function loadAllProposta1HD2DAssets(
   renderer: THREE.WebGLRenderer
 ): Promise<LoadedHD2DAssetPack> {
-  const [appleCanvas, breadCanvas, carrotCanvas, dropCanvas, esoTubeCanvas, esoWallTex] =
-    await Promise.all([
-      getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.apple, 256),
-      getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.bread, 256),
-      getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrot, 256),
-      getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.drop, 256),
-      getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.esophagusTube, 256),
-      loadEsophagusWallTexture(renderer)
-    ]);
+  const [
+    appleCanvas,
+    appleBittenCanvas,
+    breadCanvas,
+    breadBittenCanvas,
+    carrotCanvas,
+    carrotBittenCanvas,
+    eggCanvas,
+    eggBittenCanvas,
+    salivaCanvas,
+    gastricCanvas,
+    waterCanvas,
+    nutEnergyCanvas,
+    nutProteinCanvas,
+    nutVitaminCanvas,
+    esoTubeCanvas,
+    esoWallTex
+  ] = await Promise.all([
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.apple, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.appleBitten, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.bread, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.breadBitten, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrot, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.carrotBitten, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.egg, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.eggBitten, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.salivaDrop, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.gastricDrop, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.waterDrop, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientEnergy, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientProtein, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.nutrientVitamin, 256),
+    getCutoutSpriteCanvas(UPLOADED_16BIT_ASSETS.esophagusTube, 256),
+    loadEsophagusWallTexture(renderer)
+  ]);
+
+  const salivaDropTex = canvasToCrispPixelTexture(salivaCanvas, false);
+  const gastricDropTex = canvasToCrispPixelTexture(gastricCanvas, false);
+  const waterDropTex = canvasToCrispPixelTexture(waterCanvas, false);
 
   const pack: LoadedHD2DAssetPack = {
     foods: {
       maca: {
         whole: canvasToCrispPixelTexture(appleCanvas, false),
-        bitten: canvasToCrispPixelTexture(appleCanvas, true)
+        bitten: canvasToCrispPixelTexture(appleBittenCanvas, false)
       },
       pao: {
         whole: canvasToCrispPixelTexture(breadCanvas, false),
-        bitten: canvasToCrispPixelTexture(breadCanvas, true)
+        bitten: canvasToCrispPixelTexture(breadBittenCanvas, false)
       },
       cenoura: {
         whole: canvasToCrispPixelTexture(carrotCanvas, false),
-        bitten: canvasToCrispPixelTexture(carrotCanvas, true)
+        bitten: canvasToCrispPixelTexture(carrotBittenCanvas, false)
       },
       ovo: {
-        whole: createPixelEggCutoutTexture(false),
-        bitten: createPixelEggCutoutTexture(true)
+        whole: canvasToCrispPixelTexture(eggCanvas, false),
+        bitten: canvasToCrispPixelTexture(eggBittenCanvas, false)
       }
     },
-    drop: canvasToCrispPixelTexture(dropCanvas, false),
+    drops: {
+      saliva: salivaDropTex,
+      gastric: gastricDropTex,
+      water: waterDropTex
+    },
+    nutrients: {
+      energy: canvasToCrispPixelTexture(nutEnergyCanvas, false),
+      protein: canvasToCrispPixelTexture(nutProteinCanvas, false),
+      vitamin: canvasToCrispPixelTexture(nutVitaminCanvas, false)
+    },
+    drop: salivaDropTex,
     esophagusTube: canvasToCrispPixelTexture(esoTubeCanvas, false),
     esophagusWall: esoWallTex,
     disposeAll: () => {
@@ -313,7 +374,12 @@ export async function loadAllProposta1HD2DAssets(
       pack.foods.cenoura.bitten.dispose();
       pack.foods.ovo.whole.dispose();
       pack.foods.ovo.bitten.dispose();
-      pack.drop.dispose();
+      pack.drops.saliva.dispose();
+      pack.drops.gastric.dispose();
+      pack.drops.water.dispose();
+      pack.nutrients.energy.dispose();
+      pack.nutrients.protein.dispose();
+      pack.nutrients.vitamin.dispose();
       pack.esophagusTube.dispose();
       pack.esophagusWall.dispose();
     }

@@ -21,14 +21,14 @@ Este documento registra o catálogo completo de assets visuais da plataforma **C
 
 | Asset ID | Nome do Arquivo Oficial | Arquivo Atual (Fallback) | Status | Dimensões | Descrição / Estilo |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `food-apple` | `apple.png` | `apple-test.jpg` | 🟡 | 64×64 ou 128×128 | Maçã vermelha com cabinho verde, contorno `#1E1B2E`, fundo transparente. |
-| `food-apple-bitten` | `apple-bitten.png` | *(recorte procedural)* | 🔴 | 64×64 ou 128×128 | Maçã com mordida lateral revelando a polpa amarelada. |
-| `food-bread` | `bread.png` | `bread-test.jpg` | 🟡 | 64×64 ou 128×128 | Pão fatiado com casca marrom-dourada e miolo claro. |
-| `food-bread-bitten` | `bread-bitten.png` | *(recorte procedural)* | 🔴 | 64×64 ou 128×128 | Fatia de pão com mordida no canto superior. |
-| `food-carrot` | `carrot.png` | `carrot-test.jpg` | 🟡 | 64×64 ou 128×128 | Cenoura cônica laranja com ramas verdes no topo. |
-| `food-carrot-bitten` | `carrot-bitten.png` | *(recorte procedural)* | 🔴 | 64×64 ou 128×128 | Cenoura com mordida na extremidade. |
-| `food-egg` | `egg.png` | *(código canvas/svg)* | 🟡 | 64×64 ou 128×128 | Metade de ovo cozido com clara branca e gema dourada. |
-| `food-egg-bitten` | `egg-bitten.png` | *(código canvas/svg)* | 🔴 | 64×64 ou 128×128 | Ovo cozido com mordida na clara. |
+| `food-apple` | `apple.png` | `apple-test.jpg` | 🟢 | 128×128 | Maçã vermelha com cabinho verde, contorno `#1E1B2E`, fundo transparente oficial. |
+| `food-apple-bitten` | `apple-bitten.png` | `apple-bitten-test.jpg` | 🟢 | 128×128 | Maçã com mordida lateral revelando a polpa amarelada autoral. |
+| `food-bread` | `bread.png` | `bread-test.jpg` | 🟢 | 128×128 | Pão fatiado com casca marrom-dourada e miolo claro oficial. |
+| `food-bread-bitten` | `bread-bitten.png` | `bread-bitten-test.jpg` | 🟢 | 128×128 | Fatia de pão com mordida no canto superior autoral. |
+| `food-carrot` | `carrot.png` | `carrot-test.jpg` | 🟢 | 128×128 | Cenoura cônica laranja com ramas verdes no topo oficial. |
+| `food-carrot-bitten` | `carrot-bitten.png` | `carrot-bitten-test.jpg` | 🟢 | 128×128 | Cenoura com mordida na extremidade autoral. |
+| `food-egg` | `egg.png` | `egg-test.jpg` | 🟢 | 128×128 | Metade de ovo cozido com clara branca e gema dourada oficial. |
+| `food-egg-bitten` | `egg-bitten.png` | `egg-bitten-test.jpg` | 🟢 | 128×128 | Ovo cozido com mordida na clara autoral. |
 
 *Fase Futura (Roadmap):*
 - [ ] `banana.png` / `banana-bitten.png` (Potássio e energia)
@@ -42,12 +42,12 @@ Este documento registra o catálogo completo de assets visuais da plataforma **C
 
 | Asset ID | Nome do Arquivo Oficial | Arquivo Atual (Fallback) | Status | Dimensões | Descrição / Estilo |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| `fluid-saliva` | `saliva-drop.png` | `saliva-drop-test.jpg` | 🟡 | 32×32 ou 48×48 | Gota translúcida azul-celeste suave com brilho especular branco (amilase). |
-| `fluid-gastric` | `gastric-drop.png` | *(reutiliza saliva)* | 🔴 | 32×32 ou 48×48 | Gota translúcida âmbar/menta suave (pepsina e ácido gástrico). |
-| `fluid-water` | `water-drop.png` | *(reutiliza saliva)* | 🔴 | 32×32 ou 48×48 | Gota límpida azul-clara (reabsorção hídrica no intestino grosso). |
-| `particle-carb` | `nutrient-energy.png` | *(esfera 3D)* | 🔴 | 32×32 | Esfera radiante amarela/dourada suave (amido/glicose). |
-| `particle-protein` | `nutrient-protein.png` | *(esfera 3D)* | 🔴 | 32×32 | Esfera radiante lilás/azul (aminoácidos). |
-| `particle-vitamin` | `nutrient-vitamin.png` | *(esfera 3D)* | 🔴 | 32×32 | Esfera radiante verde-menta (vitaminas e minerais). |
+| `fluid-saliva` | `saliva-drop.png` | `saliva-drop-test.jpg` | 🟢 | 48×48 | Gota translúcida azul-celeste suave com brilho especular branco (amilase). |
+| `fluid-gastric` | `gastric-drop.png` | `gastric-drop.jpg` | 🟢 | 48×48 | Gota translúcida âmbar/menta suave dedicada (pepsina e ácido gástrico). |
+| `fluid-water` | `water-drop.png` | `water-drop-test.jpg` | 🟢 | 48×48 | Gota límpida azul-clara dedicada (reabsorção hídrica no intestino grosso). |
+| `particle-carb` | `nutrient-energy.png` | `nutrient-energy-test.jpg` | 🟢 | 48×48 | Esfera radiante amarela/dourada suave autoral (amido/carboidrato). |
+| `particle-protein` | `nutrient-protein.png` | `nutrient-protein-teste.jpg` | 🟢 | 48×48 | Esfera radiante lilás/azul autoral (proteínas/aminoácidos). |
+| `particle-vitamin` | `nutrient-vitamin.png` | `nutrient-vitamin-test.jpg` | 🟢 | 48×48 | Esfera radiante verde-menta autoral (vitaminas e minerais). |
 
 ---
 
@@ -113,3 +113,4 @@ Este documento registra o catálogo completo de assets visuais da plataforma **C
 2. Salve o arquivo na pasta correspondente com o **Nome do Arquivo Oficial** (ex: `public/assets/2d/foods/apple.png`).
 3. Abra este documento e altere o status de 🟡 para 🟢.
 4. O sistema detectará e carregará automaticamente o novo arquivo com transparência nativa!
+

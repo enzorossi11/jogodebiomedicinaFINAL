@@ -89,53 +89,34 @@ export const PixelCarrot: React.FC<PixelAssetProps> = ({ size = 56, className = 
 
 // 4. Ovo Cozido Nutritivo 16-Bit (Rico em Proteínas conforme o PDF)
 export const PixelEgg: React.FC<PixelAssetProps> = ({ size = 56, className = '', bitten = false }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    style={{ shapeRendering: 'crispEdges' }}
-    className={`shrink-0 ${className}`}
-    aria-label="Ovo em pixel art 16-bit"
-  >
-    <rect x="6" y="1" width="4" height="1" fill="#1E1B2E" />
-    <rect x="4" y="2" width="2" height="2" fill="#1E1B2E" />
-    <rect x="10" y="2" width="2" height="2" fill="#1E1B2E" />
-    <rect x="3" y="4" width="1" height="7" fill="#1E1B2E" />
-    <rect x="12" y="4" width="1" height="7" fill="#1E1B2E" />
-    <rect x="4" y="11" width="2" height="2" fill="#1E1B2E" />
-    <rect x="10" y="11" width="2" height="2" fill="#1E1B2E" />
-    <rect x="6" y="13" width="4" height="1" fill="#1E1B2E" />
-
-    <rect x="6" y="2" width="4" height="11" fill="#FFFFFF" />
-    <rect x="4" y="4" width="8" height="7" fill="#FFFFFF" />
-    <rect x="5" y="3" width="6" height="9" fill="#F8FAFC" />
-    <rect x="10" y="5" width="2" height="5" fill="#CBD5E1" />
-
-    <rect x="6" y="6" width="4" height="4" fill="#F59E0B" />
-    <rect x="5" y="7" width="6" height="2" fill="#FBBF24" />
-    <rect x="6" y="7" width="2" height="1" fill="#FEF3C7" />
-
-    {bitten && (
-      <g>
-        <rect x="2" y="3" width="4" height="5" fill="#F8FAFC" />
-        <rect x="5" y="4" width="1" height="4" fill="#94A3B8" />
-      </g>
-    )}
-  </svg>
-);
-
-// 5. Gota 16-Bit (usando o asset oficial enviado recortado)
-export const PixelDrop: React.FC<{ size?: number; className?: string }> = ({
-  size = 28,
-  className = ''
-}) => (
   <CutoutAssetThumb
-    src={UPLOADED_16BIT_ASSETS.drop}
-    alt="Gota em pixel art 16-bit"
+    src={bitten ? UPLOADED_16BIT_ASSETS.eggBitten : UPLOADED_16BIT_ASSETS.egg}
+    alt="Ovo cozido em pixel art 16-bit"
     size={size}
     className={className}
   />
 );
+
+// 5. Gota 16-Bit (usando assets oficiais dedicados: saliva, suco gástrico ou água)
+export const PixelDrop: React.FC<{
+  size?: number;
+  className?: string;
+  variant?: 'saliva' | 'gastric' | 'water';
+}> = ({ size = 28, className = '', variant = 'saliva' }) => {
+  const srcMap = {
+    saliva: UPLOADED_16BIT_ASSETS.salivaDrop,
+    gastric: UPLOADED_16BIT_ASSETS.gastricDrop,
+    water: UPLOADED_16BIT_ASSETS.waterDrop
+  };
+  return (
+    <CutoutAssetThumb
+      src={srcMap[variant] || UPLOADED_16BIT_ASSETS.drop}
+      alt="Gota fisiológica em pixel art 16-bit"
+      size={size}
+      className={className}
+    />
+  );
+};
 
 // 6. Tubo Esofágico 16-Bit (usando o asset oficial enviado recortado)
 export const PixelEsophagusThumb: React.FC<{ size?: number; className?: string }> = ({

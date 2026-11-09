@@ -24,6 +24,10 @@ class CalmMiniAudio {
     }
   }
 
+  public unlock() {
+    this.initContext();
+  }
+
   public setMuted(muted: boolean) {
     this.isMuted = muted;
   }
@@ -249,11 +253,71 @@ class CalmMiniAudio {
 
 export const calmAudio = new CalmMiniAudio();
 
+type SpeechStateListener = (speaking: boolean, text: string | null) => void;
+
 /**
  * Leitor e Locutor de Voz Calmo e Pausado (SpeechSynthesis)
+ * - Cacheia voz nativa pt-BR via onvoiceschanged
+ * - Fornece suporte a legendas sincronizadas via listeners reativos
  */
 export class CalmVoiceNarrator {
   private static isSpeaking: boolean = false;
+  private static activeText: string | null = null;
+  private static cachedPtVoice: SpeechSynthesisVoice | null = null;
+  private static listeners: Set<SpeechStateListener> = new Set();
+  private static isInitialized: boolean = false;
+
+  private static initVoices() {
+    if (this.isInitialized || typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      return;
+    }
+    this.isInitialized = true;
+
+    const findVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+
+      // Prioridade: vozes pt-BR de alta qualidade conhecidas
+      const preferred = voices.find(
+        (v) =>
+          v.lang.toLowerCase().replace('_', '-') === 'pt-br' &&
+          (v.name.includes('Google') ||
+            v.name.includes('Luciana') ||
+            v.name.includes('Francisca') ||
+            v.name.includes('Natural') ||
+            v.name.includes('Daniel') ||
+            v.name.includes('Leticia'))
+      );
+
+      this.cachedPtVoice =
+        preferred ||
+        voices.find((v) => v.lang.toLowerCase().startsWith('pt')) ||
+        null;
+    };
+
+    findVoice();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = findVoice;
+    }
+  }
+
+  public static addListener(listener: SpeechStateListener) {
+    this.listeners.add(listener);
+    listener(this.isSpeaking, this.activeText);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private static notifyListeners() {
+    this.listeners.forEach((listener) => {
+      try {
+        listener(this.isSpeaking, this.activeText);
+      } catch {
+        // safe
+      }
+    });
+  }
 
   public static speak(text: string, onEnd?: () => void) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -262,6 +326,7 @@ export class CalmVoiceNarrator {
     }
 
     try {
+      this.initVoices();
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -270,27 +335,33 @@ export class CalmVoiceNarrator {
       utterance.pitch = 1.0;
       utterance.volume = 0.9;
 
-      // Localizar voz em português se disponível
-      const voices = window.speechSynthesis.getVoices();
-      const ptVoice = voices.find(v => v.lang.includes('pt-BR') || v.lang.includes('pt'));
-      if (ptVoice) {
-        utterance.voice = ptVoice;
+      if (this.cachedPtVoice) {
+        utterance.voice = this.cachedPtVoice;
       }
 
       utterance.onend = () => {
         CalmVoiceNarrator.isSpeaking = false;
+        CalmVoiceNarrator.activeText = null;
+        CalmVoiceNarrator.notifyListeners();
         onEnd?.();
       };
 
       utterance.onerror = () => {
         CalmVoiceNarrator.isSpeaking = false;
+        CalmVoiceNarrator.activeText = null;
+        CalmVoiceNarrator.notifyListeners();
         onEnd?.();
       };
 
       CalmVoiceNarrator.isSpeaking = true;
+      CalmVoiceNarrator.activeText = text;
+      CalmVoiceNarrator.notifyListeners();
+
       window.speechSynthesis.speak(utterance);
     } catch {
       CalmVoiceNarrator.isSpeaking = false;
+      CalmVoiceNarrator.activeText = null;
+      CalmVoiceNarrator.notifyListeners();
       onEnd?.();
     }
   }
@@ -299,10 +370,16 @@ export class CalmVoiceNarrator {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       CalmVoiceNarrator.isSpeaking = false;
+      CalmVoiceNarrator.activeText = null;
+      CalmVoiceNarrator.notifyListeners();
     }
   }
 
   public static speaking(): boolean {
     return CalmVoiceNarrator.isSpeaking;
+  }
+
+  public static getActiveText(): string | null {
+    return CalmVoiceNarrator.activeText;
   }
 }

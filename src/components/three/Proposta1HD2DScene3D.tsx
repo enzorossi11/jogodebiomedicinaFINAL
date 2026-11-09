@@ -1171,9 +1171,17 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
           slot.spriteMat.needsUpdate = true;
         });
 
-        // Aplica gotas 16-bit (Boca, Estômago e Intestino Grosso)
-        [...mouthSalivaMats, ...gastricDropMats, ...colonWaterMats].forEach((m) => {
-          m.map = pack.drop;
+        // Aplica gotas 16-bit dedicadas por órgão (Boca, Estômago e Intestino Grosso)
+        mouthSalivaMats.forEach((m) => {
+          m.map = pack.drops.saliva;
+          m.needsUpdate = true;
+        });
+        gastricDropMats.forEach((m) => {
+          m.map = pack.drops.gastric;
+          m.needsUpdate = true;
+        });
+        colonWaterMats.forEach((m) => {
+          m.map = pack.drops.water;
           m.needsUpdate = true;
         });
 

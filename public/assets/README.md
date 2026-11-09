@@ -31,3 +31,4 @@ Para verificar o status de cada asset (🟢 Oficial, 🟡 Provisório de Teste, 
 - **Formato obrigatório:** PNG-32 com canal alfa real (fundo 100% transparente) ou SVG otimizado.
 - **Pixel Art:** Escala 1x, contorno escuro e sem compressão com perdas.
 - O sistema detecta automaticamente extensões `.png` e aplica carregamento direto com `THREE.NearestFilter`, dispensando algoritmos pesados de remoção de fundo em runtime.
+
