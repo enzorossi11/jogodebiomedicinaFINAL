@@ -220,13 +220,15 @@ export const Proposta1Viagem3D: React.FC<Proposta1Viagem3DProps> = ({
       }
 
       if (currentStage === 'mouth') {
-        if (chewCount < 3) {
+        if (chewCount < 5) {
           calmAudio.playSoftCrunch();
-          setChewCount((c) => Math.min(3, c + 1));
-        } else if (!salivaAdded) {
-          calmAudio.playSereneCompletion();
+          const next = Math.min(5, chewCount + 1);
+          setChewCount(next);
           setSalivaAdded(true);
-          setAutoObserveActive(false);
+          if (next === 5) {
+            calmAudio.playSereneCompletion();
+            setAutoObserveActive(false);
+          }
         } else {
           setAutoObserveActive(false);
         }
@@ -359,20 +361,22 @@ export const Proposta1Viagem3D: React.FC<Proposta1Viagem3DProps> = ({
   };
 
   const triggerChew = () => {
-    if (chewCount < 3) {
+    if (chewCount < 5) {
       calmAudio.playSoftCrunch();
       const next = chewCount + 1;
       setChewCount(next);
-      if (next === 3 && salivaAdded) calmAudio.playSereneCompletion();
+      setSalivaAdded(true);
+      if (next === 5) calmAudio.playSereneCompletion();
+    } else {
+      // Permite reiniciar a mastigação caso a criança queira observar novamente
+      calmAudio.playSoftCrunch();
+      setChewCount(1);
+      setSalivaAdded(true);
     }
   };
 
   const triggerSaliva = () => {
-    if (!salivaAdded) {
-      calmAudio.playSoftPlim(528);
-      setSalivaAdded(true);
-      if (chewCount >= 3) calmAudio.playSereneCompletion();
-    }
+    triggerChew();
   };
 
   const triggerSwallow = () => {
@@ -534,7 +538,7 @@ export const Proposta1Viagem3D: React.FC<Proposta1Viagem3DProps> = ({
           title: s.nomeDaEtapa,
           instruction: s.instrucaoDireta,
           narration: s.narracaoEmAudio,
-          done: chewCount >= 3 && salivaAdded
+          done: chewCount >= 5
         };
       }
       case 'swallow':
@@ -762,31 +766,41 @@ export const Proposta1Viagem3D: React.FC<Proposta1Viagem3DProps> = ({
             )}
 
             {currentStage === 'mouth' && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+                <div className="flex items-center gap-2.5 flex-1 min-w-[200px]">
+                  <PixelDrop size={20} />
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center justify-between text-xs text-slate-700">
+                      <span className="font-semibold">
+                        {chewCount === 0 && 'Alimento pronto sobre a língua · Toque para mastigar'}
+                        {chewCount > 0 &&
+                          chewCount < 5 &&
+                          `Triturando em partículas e misturando saliva (${chewCount * 4} partículas + ${chewCount} gotas)`}
+                        {chewCount >= 5 && 'Bolo alimentar macio e umedecido pela saliva pronto!'}
+                      </span>
+                      <span className="font-bold text-teal-800">{Math.min(100, chewCount * 20)}%</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                      <div
+                        className="h-full bg-teal-600 transition-all duration-300"
+                        style={{ width: `${Math.min(100, chewCount * 20)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   onClick={triggerChew}
-                  disabled={chewCount >= 3}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                    chewCount >= 3
-                      ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                    chewCount >= 5
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-900 hover:bg-emerald-100'
                       : 'bg-teal-700 hover:bg-teal-800 border-teal-800 text-white'
                   }`}
                 >
-                  <span>1. Mastigar nos Dentes 3D ({chewCount}/3)</span>
-                </button>
-
-                <button
-                  onClick={triggerSaliva}
-                  disabled={salivaAdded}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
-                    salivaAdded
-                      ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-                      : 'bg-sky-50 hover:bg-sky-100 border-sky-300 text-sky-950'
-                  }`}
-                >
-                  <PixelDrop size={18} />
                   <span>
-                    {salivaAdded ? 'Saliva 16-Bit Adicionada' : '2. Adicionar Gota de Saliva 16-Bit'}
+                    {chewCount >= 5
+                      ? 'Bolo Formado (5/5) · Mastigar novamente'
+                      : `Mastigar Alimento (${chewCount}/5)`}
                   </span>
                 </button>
               </div>

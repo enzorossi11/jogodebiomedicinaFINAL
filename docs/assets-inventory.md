@@ -29,6 +29,11 @@ Este documento registra o catálogo completo de assets visuais da plataforma **C
 | `food-carrot-bitten` | `carrot-bitten.png` | `carrot-bitten-test.jpg` | 🟢 | 128×128 | Cenoura com mordida na extremidade autoral. |
 | `food-egg` | `egg.png` | `egg-test.jpg` | 🟢 | 128×128 | Metade de ovo cozido com clara branca e gema dourada oficial. |
 | `food-egg-bitten` | `egg-bitten.png` | `egg-bitten-test.jpg` | 🟢 | 128×128 | Ovo cozido com mordida na clara autoral. |
+| `food-crumbs-apple` | `apple-crumbs.png` | *(Procedural 3D/2D)* | 🔴 | 64×64 | Partículas de maçã triturada (casca vermelha + polpa creme) para a Etapa 3. |
+| `food-crumbs-bread` | `bread-crumbs.png` | *(Procedural 3D/2D)* | 🔴 | 64×64 | Farelos de pão triturado (casca dourada + miolo trigo) para a Etapa 3. |
+| `food-crumbs-carrot` | `carrot-crumbs.png` | *(Procedural 3D/2D)* | 🔴 | 64×64 | Pedacinhos de cenoura triturada (laranja vivo) para a Etapa 3. |
+| `food-crumbs-egg` | `egg-crumbs.png` | *(Procedural 3D/2D)* | 🔴 | 64×64 | Pedacinhos de ovo triturado (clara branca + gema dourada) para a Etapa 3. |
+| `bolus-formed` | `bolus-formed.png` | *(Procedural 3D/2D)* | 🔴 | 128×128 | Bolo alimentar macio e umedecido pela saliva formado na 5ª mastigada. |
 
 *Fase Futura (Roadmap):*
 - [ ] `banana.png` / `banana-bitten.png` (Potássio e energia)

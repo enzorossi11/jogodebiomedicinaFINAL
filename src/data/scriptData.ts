@@ -108,9 +108,9 @@ export const SCRIPT_ETAPAS: ScriptStage[] = [
     objetivoBiologico:
       'Começa a mastigação que tritura o alimento. A saliva umedece o alimento e inicia a digestão do amido.',
     instrucaoDireta:
-      'Toque nos dentes 3D ou no botão Mastigar e adicione a gota de saliva 16-bit, ou use Observar sem tocar.',
+      'Toque na boca 3D ou no botão Mastigar (5 vezes) para triturar o alimento enquanto a saliva o umedece automaticamente.',
     narracaoEmAudio:
-      'Na boca começa a mastigação. Os dentes trituram o alimento em partes pequenas. A gota de saliva umedece tudo e inicia a digestão do amido.',
+      'Na boca começa a mastigação. A cada mastigada, os dentes trituram o alimento em partes pequenas e a saliva vai sendo liberada para umedecer tudo e formar o bolo alimentar.',
     mecanicaVisualSugerida:
       'Cavidade bucal 3D clara em Three.js com o sprite 16-bit recortado do alimento e gotas de saliva 16-bit nítidas.',
     recompensaSensorial:

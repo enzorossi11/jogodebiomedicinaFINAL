@@ -73,6 +73,46 @@ export const ASSET_CATALOG = {
       fallbackPath: '/assets/2d/foods/egg-bitten-test.jpg',
       isNativeAlpha: true,
       label: 'Ovo Cozido Mordido 16-Bit'
+    },
+    appleCrumbs: {
+      id: 'food-crumbs-apple',
+      officialPath: '/assets/2d/foods/apple-crumbs.png',
+      fallbackPath: '',
+      isNativeAlpha: true,
+      hasOfficial: false,
+      label: 'Partículas de Maçã Triturada 16-Bit'
+    },
+    breadCrumbs: {
+      id: 'food-crumbs-bread',
+      officialPath: '/assets/2d/foods/bread-crumbs.png',
+      fallbackPath: '',
+      isNativeAlpha: true,
+      hasOfficial: false,
+      label: 'Partículas de Pão Triturado 16-Bit'
+    },
+    carrotCrumbs: {
+      id: 'food-crumbs-carrot',
+      officialPath: '/assets/2d/foods/carrot-crumbs.png',
+      fallbackPath: '',
+      isNativeAlpha: true,
+      hasOfficial: false,
+      label: 'Partículas de Cenoura Triturada 16-Bit'
+    },
+    eggCrumbs: {
+      id: 'food-crumbs-egg',
+      officialPath: '/assets/2d/foods/egg-crumbs.png',
+      fallbackPath: '',
+      isNativeAlpha: true,
+      hasOfficial: false,
+      label: 'Partículas de Ovo Triturado 16-Bit'
+    },
+    bolusFormed: {
+      id: 'bolus-formed',
+      officialPath: '/assets/2d/foods/bolus-formed.png',
+      fallbackPath: '',
+      isNativeAlpha: true,
+      hasOfficial: false,
+      label: 'Bolo Alimentar Úmido Formado 16-Bit'
     }
   },
 
