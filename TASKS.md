@@ -33,4 +33,5 @@ Quadro de tarefas operacionais, melhorias e débitos técnicos do projeto.
 - [x] **ASSETS-01:** Reestruturação da arquitetura de pastas de assets (`public/assets/2d/`, `3d/`, `docs/`) e remoção da pasta legada `aistudio`.
 - [x] **ASSETS-02:** Criação do catálogo canônico tipado [src/data/assetCatalog.ts](file:///c:/Users/bruno/OneDrive/Área%20de%20Trabalho/jogodebiomedicina/src/data/assetCatalog.ts) e inventário de controle [docs/assets-inventory.md](file:///c:/Users/bruno/OneDrive/Área%20de%20Trabalho/jogodebiomedicina/docs/assets-inventory.md).
 - [x] **STAGE1-01:** Resolução do bug de renderização dos alimentos (blindagem contra 404 e resiliência com fallback procedural) e reformulação da ambientação 3D (Opção A: estúdio orgânico acolhedor em tom creme-areia #F5EFEB, mesa de carvalho nobre, pratos de cerâmica e iluminação quente 3200K).
+- [x] **STAGE2-01:** Reformulação completa da Etapa 2 (`FirstBiteStation.ts`): modelagem de Criança Chibi Acolhedora em perspectiva 3/4, continuidade da mesa de carvalho, cinemática inversa de 2 elos com arco de Bézier para o braço e expressões faciais vivas.
 
