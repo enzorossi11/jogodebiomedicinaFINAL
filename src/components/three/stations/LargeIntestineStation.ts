@@ -1,121 +1,143 @@
 /**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- *
- * Estação 8: large_intestine (Moldura 3D do Cólon + Gotas de Água 16-Bit)
+ * Estação Intestino grosso: a moldura do cólon (sobe, atravessa, desce) com
+ * os haustros, a parede translúcida e o conteúdo dentro. Cada gota de água
+ * reabsorvida atravessa a parede e segue pela veia azul de volta ao corpo;
+ * o conteúdo vai ficando mais firme e escuro.
  */
-
 import * as THREE from 'three';
-import { LoadedHD2DAssetPack } from '../pixelAssetLoader';
-import { Proposta1HD2DSceneProps } from '../Proposta1HD2DScene3D';
-import { StationBuildContext, StationInstance } from './types';
-
-const _curvePt = new THREE.Vector3();
+import type { Proposta1HD2DSceneProps } from '../Proposta1HD2DScene3D';
+import type { StationBuildContext, StationInstance } from './types';
+import { COR, Impulso, TuboDinamico, esfera, materialMacio, materialTranslucido, sino, suave } from './anatomia';
 
 export function createLargeIntestineStation(ctx: StationBuildContext): StationInstance {
   const group = new THREE.Group();
 
-  const colonCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-0.55, 0.35, 0),
-    new THREE.Vector3(-0.58, 1.28, 0),
-    new THREE.Vector3(0, 1.36, 0.04),
-    new THREE.Vector3(0.58, 1.28, 0),
-    new THREE.Vector3(0.55, 0.35, 0),
-    new THREE.Vector3(0.18, 0.22, 0)
+  const matParede = materialTranslucido(ctx, COR.mucosa, 0.55, { roughness: 0.45 });
+  const matTenia = materialMacio(ctx, COR.musculo, { roughness: 0.55 });
+  const matConteudo = materialMacio(ctx, COR.quimo, { roughness: 0.5 });
+  const matAgua = materialMacio(ctx, COR.agua, { roughness: 0.1, clearcoat: 1, transparent: true, opacity: 0.85 });
+  const matVeia = materialMacio(ctx, COR.veia, { roughness: 0.4, clearcoat: 0.5 });
+  const matApendice = materialMacio(ctx, COR.mucosaEscura, { roughness: 0.5 });
+
+  // moldura do cólon: ceco (baixo, à direita do corpo = esquerda da tela) → ascendente → transverso → descendente → sigmoide
+  const curva = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.62, 0.3, 0),
+    new THREE.Vector3(-0.62, 0.7, 0),
+    new THREE.Vector3(-0.6, 1.15, 0),
+    new THREE.Vector3(-0.45, 1.4, 0),
+    new THREE.Vector3(0.0, 1.45, 0.02),
+    new THREE.Vector3(0.45, 1.4, 0),
+    new THREE.Vector3(0.6, 1.15, 0),
+    new THREE.Vector3(0.62, 0.7, 0),
+    new THREE.Vector3(0.55, 0.38, 0),
+    new THREE.Vector3(0.35, 0.28, 0)
   ]);
-  const colonShellMat = ctx.trackMat(
-    new THREE.MeshPhysicalMaterial({
-      color: 0xf472b6,
-      roughness: 0.34,
-      transparent: true,
-      opacity: 0.55,
-      depthWrite: false,
-      clearcoat: 0.4
-    })
-  );
-  const colonTube = new THREE.Mesh(
-    ctx.trackGeo(new THREE.TubeGeometry(colonCurve, 56, 0.17, 20, false)),
-    colonShellMat
-  );
-  colonTube.renderOrder = 8;
-  group.add(colonTube);
+  const RAIO = 0.125;
+  const parede = new TuboDinamico(ctx, curva, 110, 30, matParede);
+  const conteudo = new TuboDinamico(ctx, curva, 110, 18, matConteudo);
+  group.add(parede.mesh, conteudo.mesh);
 
-  const fiberBolusMat = ctx.trackMat(
-    new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.65 })
-  );
-  const colonBolus = new THREE.Mesh(
-    ctx.trackGeo(new THREE.SphereGeometry(0.12, 20, 20)),
-    fiberBolusMat
-  );
-  group.add(colonBolus);
+  // tênia: a faixa muscular que corre ao longo do cólon
+  const pontosTenia = Array.from({ length: 24 }, (_, i) => {
+    const p = curva.getPointAt(i / 23);
+    return new THREE.Vector3(p.x, p.y, p.z + RAIO * 0.95);
+  });
+  const tenia = new TuboDinamico(ctx, new THREE.CatmullRomCurve3(pontosTenia), 80, 8, matTenia);
+  tenia.atualizar(() => 0.018);
+  group.add(tenia.mesh);
 
-  const colonWaterSprites: THREE.Mesh[] = [];
-  const colonWaterMats: THREE.MeshBasicMaterial[] = [];
-  const waterBaseCoords: Array<[number, number, number]> = [
-    [-0.55, 0.85, 0.18],
-    [0, 1.36, 0.22],
-    [0.55, 0.85, 0.18]
-  ];
-  waterBaseCoords.forEach(([wx, wy, wz], idx) => {
-    const { mesh, mat } = ctx.createHD2DSpritePlane(0.26);
-    mesh.position.set(wx, wy, wz);
-    group.add(mesh);
-    colonWaterSprites.push(mesh);
-    colonWaterMats.push(mat);
+  // apêndice no ceco
+  const apendice = new THREE.Mesh(ctx.trackGeo(new THREE.CapsuleGeometry(0.03, 0.14, 6, 12)), matApendice);
+  apendice.position.set(-0.56, 0.2, 0.02);
+  apendice.rotation.z = 0.5;
+  group.add(apendice);
 
-    // Hit proxy amplo para acessibilidade motora
-    const waterProxy = new THREE.Mesh(
-      ctx.trackGeo(new THREE.SphereGeometry(0.22, 12, 12)),
-      ctx.trackMat(new THREE.MeshBasicMaterial({ visible: false }))
-    );
-    waterProxy.position.copy(mesh.position);
-    group.add(waterProxy);
-    ctx.registerInteractive(
-      waterProxy,
-      'large_intestine',
-      `Reabsorver Gota de Água ${idx + 1} para hidratar o corpo`,
-      'absorb_water',
-      idx
-    );
+  // veia que acompanha o cólon por dentro da moldura, voltando ao centro
+  const curvaVeia = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.42, 0.55, -0.05),
+    new THREE.Vector3(-0.4, 1.1, -0.05),
+    new THREE.Vector3(0.0, 1.22, -0.05),
+    new THREE.Vector3(0.4, 1.1, -0.05),
+    new THREE.Vector3(0.42, 0.55, -0.05),
+    new THREE.Vector3(0.0, 0.62, -0.05)
+  ]);
+  const veia = new TuboDinamico(ctx, curvaVeia, 60, 12, matVeia);
+  veia.atualizar(() => 0.03);
+  group.add(veia.mesh);
+  const figado = esfera(ctx, 0.06, matVeia, 16); // ponto de chegada (simplificado)
+  figado.position.set(0, 0.62, -0.05);
+  figado.scale.set(1.4, 0.7, 0.7);
+  group.add(figado);
+
+  // gotas de água dentro do cólon (clicáveis)
+  const POSICOES = [0.2, 0.5, 0.8];
+  const gotas = POSICOES.map((u, i) => {
+    const g = esfera(ctx, 0.055, matAgua, 16);
+    g.scale.set(1, 1.2, 1);
+    ctx.registerInteractive(g, 'large_intestine', 'Reabsorver água', 'absorb_water', i);
+    group.add(g);
+    return { mesh: g, u, impulso: new Impulso(2.6) };
   });
 
-  let smoothColonT = 0.1;
+  let firmeza = 0;
 
-  const applyAssets = (pack: LoadedHD2DAssetPack) => {
-    colonWaterMats.forEach((m) => {
-      m.map = pack.drops.water;
-      m.needsUpdate = true;
+  const update = (cur: Proposta1HD2DSceneProps, dt: number, simTime: number) => {
+    const calmo = cur.lowSensory;
+    const total = cur.waterDropsAbsorbed.filter(Boolean).length;
+    firmeza = THREE.MathUtils.damp(firmeza, total / 3, 2.5, dt);
+
+    // haustros respiram devagar; uma onda lenta de massa percorre o cólon
+    const uOnda = (simTime * 0.08) % 1;
+    const respira = calmo ? 0 : Math.sin(simTime * 1.2) * 0.01;
+    parede.atualizar((u, th) => {
+      const haustro = 1 + 0.16 * Math.abs(Math.sin(u * Math.PI * 16)) * (0.6 + 0.4 * Math.cos(th));
+      const onda = 1 + 0.08 * sino(u - uOnda, 0.05);
+      return RAIO * haustro * onda + respira;
     });
-  };
-
-  const update = (
-    cur: Proposta1HD2DSceneProps,
-    dt: number,
-    simTime: number
-  ) => {
-    const waterCount = cur.waterDropsAbsorbed.filter(Boolean).length;
-    const desiredT = 0.12 + (waterCount / 3) * 0.82;
-    smoothColonT = THREE.MathUtils.damp(smoothColonT, desiredT, 3.2, dt);
-    colonCurve.getPointAt(Math.min(1, smoothColonT), _curvePt);
-    colonBolus.position.copy(_curvePt);
-
-    colonWaterSprites.forEach((sp, idx) => {
-      const reabsorbed = cur.waterDropsAbsorbed[idx];
-      const [bx, by] = waterBaseCoords[idx];
-      const targetY = reabsorbed ? by + 0.35 : by + Math.sin(simTime * 1.6 + idx) * 0.025;
-      const targetSc = reabsorbed ? 0.01 : 0.26;
-      sp.position.x = bx;
-      sp.position.y = THREE.MathUtils.damp(sp.position.y, targetY, 4, dt);
-      const sc = THREE.MathUtils.damp(sp.scale.x, targetSc, 5, dt);
-      sp.scale.set(sc, sc, 1);
-      sp.visible = sc > 0.03;
+    conteudo.atualizar((u) => {
+      const haustro = 1 + 0.12 * Math.abs(Math.sin(u * Math.PI * 16));
+      const enche = 0.55 + firmeza * 0.2;
+      return RAIO * haustro * enche;
     });
+    // conteúdo escurece e fica fosco conforme perde água
+    matConteudo.color.set(COR.quimo).lerp(new THREE.Color(COR.fezes), firmeza);
+    matConteudo.roughness = 0.5 + firmeza * 0.35;
+
+    gotas.forEach((g, i) => {
+      const absorvida = cur.waterDropsAbsorbed[i];
+      const t = g.impulso.observar(absorvida ? 1 : 0, simTime);
+      if (!absorvida) g.impulso.reiniciar();
+      const dentro = curva.getPointAt(g.u);
+      if (!absorvida) {
+        g.mesh.visible = true;
+        g.mesh.position.set(dentro.x + Math.sin(simTime * 0.8 + i) * 0.02, dentro.y + Math.cos(simTime * 0.6 + i) * 0.02, dentro.z + 0.03);
+        g.mesh.scale.set(1, 1.2, 1);
+        matAgua.opacity = 0.85;
+        return;
+      }
+      // atravessa a parede (até a veia) e depois corre pela veia até o centro
+      const f1 = suave(t / 0.35);
+      const uVeia = THREE.MathUtils.clamp(g.u * 0.78, 0, 1);
+      const naVeia = curvaVeia.getPointAt(uVeia);
+      if (t < 0.35) {
+        g.mesh.visible = true;
+        g.mesh.position.lerpVectors(dentro, naVeia, f1);
+        g.mesh.scale.setScalar(1 - f1 * 0.4);
+      } else if (t < 1) {
+        const f2 = suave((t - 0.35) / 0.65);
+        g.mesh.visible = true;
+        g.mesh.position.copy(curvaVeia.getPointAt(THREE.MathUtils.lerp(uVeia, 1, f2)));
+        g.mesh.scale.setScalar(0.6 - f2 * 0.3);
+      } else {
+        g.mesh.visible = false;
+      }
+    });
+
+    // a veia "bebe": pulsa quando recebe água
+    const recebendo = gotas.some((g) => cur.waterDropsAbsorbed[gotas.indexOf(g)] && g.mesh.visible);
+    const pulsar = recebendo && !calmo ? 1 + Math.sin(simTime * 4) * 0.08 : 1;
+    figado.scale.set(1.4 * pulsar, 0.7 * pulsar, 0.7 * pulsar);
   };
 
-  return {
-    group,
-    applyAssets,
-    update
-  };
+  return { group, update };
 }
-

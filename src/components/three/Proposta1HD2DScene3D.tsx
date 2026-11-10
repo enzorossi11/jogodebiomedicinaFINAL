@@ -76,13 +76,13 @@ const STAGE_CAMERAS: Record<
 > = {
   food_select: { pos: [0, 1.38, 2.35], target: [0, 0.7, 0] },
   first_bite: { pos: [0.28, 1.3, 2.1], target: [0.02, 0.76, 0.04] },
-  mouth: { pos: [0, 1.18, 2.05], target: [0, 0.95, 0] },
-  swallow: { pos: [0, 1.12, 2.1], target: [0, 0.95, 0] },
-  esophagus: { pos: [0, 1.15, 2.2], target: [0, 0.98, 0] },
-  stomach: { pos: [0, 1.1, 2.1], target: [0, 0.9, 0] },
-  small_intestine: { pos: [0, 1.22, 2.1], target: [0, 0.78, 0] },
-  large_intestine: { pos: [0, 1.1, 2.2], target: [0, 0.92, 0] },
-  final_ordering: { pos: [0, 1.1, 2.5], target: [0, 0.96, 0] }
+  mouth: { pos: [0, 1.02, 2.3], target: [0, 0.95, 0] },
+  swallow: { pos: [0.05, 1.05, 2.45], target: [0.05, 1.0, 0] },
+  esophagus: { pos: [0, 1.0, 2.15], target: [0, 0.95, 0] },
+  stomach: { pos: [0.1, 1.1, 2.25], target: [0.15, 1.03, 0] },
+  small_intestine: { pos: [0, 1.1, 2.3], target: [0, 0.75, 0] },
+  large_intestine: { pos: [0, 0.95, 2.35], target: [0, 0.88, 0] },
+  final_ordering: { pos: [0, 1.2, 2.6], target: [0, 1.08, 0] }
 };
 
 export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) => {
