@@ -39,7 +39,7 @@ Regras que valem em toda a aplicação:
 - **Quero uma pausa.** Botão sempre visível que abre uma tela neutra de descanso.
 - **Baixo estímulo e tamanho do texto** ajustáveis, guardados no navegador.
 
-O detalhamento pedagógico está em [`docs/domain/business-rules.md`](docs/domain/business-rules.md), com glossário e personas na mesma pasta. O documento do projeto para mediadores fica em [`public/assets/docs/projeto-biodesign-fmu.pdf`](public/assets/docs/projeto-biodesign-fmu.pdf) e também abre pelo botão "Roteiro" dentro da aplicação.
+O contexto completo do que foi feito nesta versão está em [`docs/V1.md`](docs/V1.md). O detalhamento pedagógico está em [`docs/domain/business-rules.md`](docs/domain/business-rules.md), com glossário e personas na mesma pasta. O documento do projeto para mediadores fica em [`public/assets/docs/projeto-biodesign-fmu.pdf`](public/assets/docs/projeto-biodesign-fmu.pdf) e também abre pelo botão "Roteiro" dentro da aplicação.
 
 ## Como rodar
 
