@@ -1,45 +1,86 @@
-# Conhecendo Meu Corpo Por Dentro — Viagem do Lanche (Three.js HD-2D)
+# A Viagem do Alimento
 
-Plataforma educacional interativa em **Three.js (WebGL 3D)** voltada à educação em saúde, ciências e comunicação acolhedora para crianças e adolescentes neurodivergentes (**TEA, TDAH, TOC, Dislexia e Deficiência Intelectual**), alinhada ao projeto **BioDesign Inclusivo (FMU)**.
+Experiência interativa em 3D sobre o sistema digestório, feita para crianças e adolescentes neurodivergentes (TEA, TDAH, TOC, dislexia e deficiência intelectual). A criança escolhe um alimento e acompanha o que acontece com ele da boca ao intestino grosso, parada por parada, tocando ou só observando, sem pressa e sem respostas erradas.
 
----
+Projeto desenvolvido no âmbito do **BioDesign Inclusivo (FMU)**.
 
-## Módulos Interativos em Three.js
+**Acesse:** https://enzorossi11.github.io/jogodebiomedicinaFINAL/
 
-### 1. Proposta 1 — A Viagem do Alimento (Estilo HD-2D: Órgãos 3D + Assets 16-Bit)
-Jornada espacial 3D completa por todas as etapas do sistema digestório combinando órgãos 3D esculpidos com iluminação PBR (`RoomEnvironment`) e os **6 assets 16-bit autorais** recortados com nitidez pixelada (`NearestFilter`):
-- **Mesa 3D de Escolha:** Maçã (fibras), Pão fatiado (amido), Cenoura (vitamina A e fibras) e Ovo (proteínas).
-- **Primeira Mordida em 3D:** Braço articulado 3D que pega o alimento no prato, leva até a boca 3D e realiza a mordida.
-- **Boca, Garganta e Epiglote 3D:** Mastigação nos dentes 3D, gotas de saliva 16-bit e fechamento protetor da epiglote sobre a traqueia.
-- **Esôfago 3D com Textura e Tubo 16-Bit:** Ondas peristálticas suaves em 3 anéis musculares.
-- **Estômago, Intestino Delgado e Intestino Grosso 3D:** Sucos gástricos, 36 vilosidades intestinais (`InstancedMesh`) para absorção de nutrientes e reabsorção de gotas de água 16-bit.
-- **Sequência Final no Tronco 3D Translúcido:** Organização acolhedora dos 5 órgãos sem mensagens punitivas de erro.
+![Capa](docs/prints/capa.png)
 
-### 2. Proposta 2 — Meu Corpo Está Falando Comigo (Interocepção 3D & CAA)
-- Modelo corporal escultural 3D em Three.js com seleção por toque/clique em **Cabeça, Peito, Barriga, Mãos, Pés** ou a opção acolhedora **"Não sei"**.
-- Reconhecimento de sensações (**Confortável, Desconfortável, Quente, Frio, Formigamento, Não sei explicar**) sem respostas certas ou erradas.
-- Expressão de necessidades (**Quero ajuda, Quero uma pausa, Continuar explorando**) + **Painel de Cartões Presencial**.
+## A viagem
 
----
+| Parada | O que acontece | O que a criança faz |
+| --- | --- | --- |
+| Escolha | Maçã, pão, cenoura ou ovo | Escolhe o alimento que vai viajar |
+| Boca | A mão leva o alimento à boca; dentes trituram e a saliva umedece | Dá a mordida e mastiga cinco vezes |
+| Garganta | A epiglote fecha o caminho do ar e guia o alimento | Engole e vê o alimento descer com segurança |
+| Esôfago | Ondas musculares empurram o alimento para baixo | Aperta os três anéis, um por vez |
+| Estômago | Sucos gástricos misturam tudo e formam o quimo | Pinga suco gástrico e enzimas |
+| Intestino delgado | As vilosidades absorvem os nutrientes | Absorve energia, proteínas e vitaminas |
+| Intestino grosso | A água volta para o corpo | Reabsorve as gotas de água |
+| Caminho completo | O trajeto inteiro dentro do corpo | Monta a ordem dos cinco órgãos |
 
-## Compromissos de Conforto Sensorial e Acessibilidade
-- Zero luzes piscantes, zero cronômetros regressivos e zero sons bruscos.
-- Modo **"Observar sem tocar"** em todas as estações e navegação **Voltar / Próximo órgão** sempre desbloqueada.
-- Botão permanente **"Quero uma pausa"**, **Modo Baixo Estímulo**, ajuste de tamanho da fonte e narração em voz calma opcional (`pt-BR`).
+![A primeira mordida](docs/prints/mordida.png)
 
----
+Cada parada traz um "Você sabia?" sobre o alimento escolhido e pode ser ouvida em narração calma (opcional).
 
-## Como Executar Localmente
+Uma atividade complementar, **Meu corpo está falando comigo**, trabalha interocepção: a criança toca numa parte do corpo, reconhece uma sensação e diz do que precisa, com a opção "não sei" sempre disponível.
+
+## Conforto sensorial
+
+Regras que valem em toda a aplicação:
+
+- **Sem som obrigatório.** Tudo funciona em silêncio; o áudio é opcional e desliga com um toque.
+- **Sem luz piscante.** Cores calmas, movimentos lentos, nenhum flash.
+- **Sem pressa.** Não há cronômetro. "Voltar" e "Próxima parada" nunca travam.
+- **Sem certo ou errado.** Nenhuma resposta é punida; na montagem final, só o que está certo acende.
+- **Observar sem tocar.** Toda parada pode ser assistida sem interagir.
+- **Quero uma pausa.** Botão sempre visível que abre uma tela neutra de descanso.
+- **Baixo estímulo e tamanho do texto** ajustáveis, guardados no navegador.
+
+O detalhamento pedagógico está em [`docs/domain/business-rules.md`](docs/domain/business-rules.md), com glossário e personas na mesma pasta. O documento do projeto para mediadores fica em [`public/assets/docs/projeto-biodesign-fmu.pdf`](public/assets/docs/projeto-biodesign-fmu.pdf) e também abre pelo botão "Roteiro" dentro da aplicação.
+
+## Como rodar
 
 ```bash
 npm install
 npm run dev
 ```
 
-A aplicação estará disponível em `http://localhost:3000`.
-
-Para gerar a versão de produção:
+Outros comandos:
 
 ```bash
-npm run build
+npm test          # testes (vitest)
+npm run build     # verificação de tipos + build de produção em dist/
+npm run preview   # serve o build localmente
 ```
+
+A publicação no GitHub Pages é automática a cada push na branch `main` (`.github/workflows/deploy.yml`).
+
+## Tecnologias
+
+React 19, TypeScript, Vite, Tailwind CSS 4, Three.js (cena 3D com sprites 16-bit), Web Audio API (sons suaves) e Web Speech API (narração em pt-BR).
+
+## Estrutura
+
+```
+src/
+  App.tsx                   navegação entre capa, viagem e atividade complementar
+  components/
+    Capa.tsx                página inicial
+    Cabecalho.tsx           cabeçalho, acessibilidade e pausa
+    Jornada.tsx             a viagem: palco 3D + painel de cada parada
+    Proposta2Interocepcao   atividade "Meu corpo está falando comigo"
+    three/                  cena Three.js e as estações de cada órgão
+  data/
+    etapas.ts               ordem e nomes das paradas
+    scriptData.ts           roteiro pedagógico e textos
+  utils/audioSystem.ts      sons e narração
+public/assets/              sprites, texturas e o PDF do projeto
+docs/domain/                regras pedagógicas, glossário e personas
+```
+
+## Créditos
+
+Projeto original de [Bsalvo/jogodebiomedicina](https://github.com/Bsalvo/jogodebiomedicina), evoluído nesta versão com nova interface, acessibilidade e publicação.

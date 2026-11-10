@@ -6,7 +6,7 @@
  */
 
 import * as THREE from 'three';
-import { ActiveScreen } from '../../StageProgressBar';
+import { ActiveScreen } from '../../../data/etapas';
 import { FoodId } from '../../FoodSelector';
 import { LoadedHD2DAssetPack } from '../pixelAssetLoader';
 import { Proposta1HD2DSceneProps } from '../Proposta1HD2DScene3D';

@@ -1,36 +1,30 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vitest/config';
 
-export default defineConfig(() => {
-  return {
-    plugins: [react(), tailwindcss()],
-    resolve: {
-      alias: {
-        '@': path.resolve(import.meta.dirname, '.'),
-      },
-    },
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('three')) {
-              return 'three';
-            }
-            if (id.includes('lucide-react') || id.includes('motion')) {
-              return 'vendor-ui';
-            }
-          },
-        },
-      },
-    },
-    server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
-    },
-  };
+// No GitHub Pages o site fica em /<nome-do-repositório>/; localmente fica na raiz.
+const base = process.env.BASE_PATH ?? '/';
+
+export default defineConfig({
+  base,
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: { '@': path.resolve(import.meta.dirname, '.') }
+  },
+  build: {
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/three')) return 'three';
+          if (id.includes('lucide-react') || id.includes('motion')) return 'vendor-ui';
+        }
+      }
+    }
+  },
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.test.ts']
+  }
 });

@@ -1,20 +1,152 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import '@fontsource-variable/lexend';
 
+/* ------------------------------------------------------------------ tokens */
+@theme {
+  --font-sans: 'Lexend Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* paleta calma: verde-mar (ação), areia (fundo), ameixa (texto) */
+  --color-mar-50: #effaf7;
+  --color-mar-100: #d7f2ea;
+  --color-mar-200: #afe4d6;
+  --color-mar-300: #7dd0bc;
+  --color-mar-500: #2a9d85;
+  --color-mar-600: #1f806c;
+  --color-mar-700: #1a6758;
+  --color-mar-800: #175247;
+
+  --color-areia-50: #fbf8f4;
+  --color-areia-100: #f5efe8;
+  --color-areia-200: #ebe1d6;
+  --color-areia-300: #d9cbbb;
+
+  --color-ameixa-500: #6b6380;
+  --color-ameixa-700: #3f3952;
+  --color-ameixa-900: #27223a;
+
+  --color-pessego-100: #fde7d8;
+  --color-pessego-300: #f8c4a4;
+  --color-pessego-500: #e8906a;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.4rem;
+  --radius-3xl: 2rem;
+
+  --shadow-suave: 0 1px 2px rgb(39 34 58 / 0.05), 0 10px 30px -12px rgb(39 34 58 / 0.18);
+  --shadow-flutuante: 0 2px 4px rgb(39 34 58 / 0.06), 0 18px 48px -16px rgb(39 34 58 / 0.28);
+}
+
+/* ------------------------------------------------------------------- base */
 @layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
   body {
-    font-family: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    @apply bg-areia-50 text-ameixa-900 antialiased;
+    font-size: var(--tamanho-texto, 1rem);
+  }
+  /* tamanho de fonte escolhido pelo usuário (acessibilidade) */
+  [data-fonte='grande'] {
+    --tamanho-texto: 1.125rem;
+  }
+  [data-fonte='maior'] {
+    --tamanho-texto: 1.3rem;
+  }
+  /* modo baixo estímulo: menos contraste de cor, nada saturado */
+  [data-baixo-estimulo='true'] {
+    --color-mar-500: #3f8f7f;
+    --color-mar-600: #35776a;
+    --color-pessego-500: #c9a28f;
+  }
+  [data-baixo-estimulo='true'] body {
+    @apply bg-areia-100;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-mar-500);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: default;
   }
 }
 
-/* Accessible focus ring for keyboard navigation */
-:focus-visible {
-  outline: 3px solid #0D9488;
-  outline-offset: 2px;
+/* ------------------------------------------------------------- componentes */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 select-none;
+  }
+  .btn-primario {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 select-none bg-mar-600 text-white hover:bg-mar-700;
+  }
+  .btn-secundario {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 select-none border border-areia-300 bg-white text-ameixa-900 hover:border-mar-300 hover:bg-mar-50;
+  }
+  .btn-fantasma {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 select-none text-ameixa-700 hover:bg-areia-200/70;
+  }
+  .btn-grande {
+    @apply px-6 py-3.5 text-base rounded-2xl;
+  }
+  .cartao {
+    @apply rounded-3xl border border-areia-200 bg-white shadow-suave;
+  }
+  .rotulo {
+    @apply text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-mar-700;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors duration-200;
+  }
 }
 
-/* Reduced motion preference respected */
+/* --------------------------------------------------------- palco 3D (céu) */
+.palco-3d {
+  background:
+    radial-gradient(120% 80% at 50% 110%, #efe6da 0%, transparent 60%),
+    linear-gradient(180deg, #f7f3ee 0%, #fbf8f4 45%, #f1ebe3 100%);
+}
+[data-baixo-estimulo='true'] .palco-3d {
+  background: linear-gradient(180deg, #f1ede7 0%, #ebe6df 100%);
+}
+.palco-3d canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+}
+
+/* bolinhas de progresso de uma etapa (ex.: 3 de 5 mastigadas) */
+.pontos-progresso span {
+  @apply block h-2.5 w-2.5 rounded-full bg-areia-300 transition-colors duration-300;
+}
+.pontos-progresso span[data-feito='true'] {
+  @apply bg-mar-500;
+}
+
+/* entrada suave dos painéis (sem flash) */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.surgir {
+  animation: surgir 0.35s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

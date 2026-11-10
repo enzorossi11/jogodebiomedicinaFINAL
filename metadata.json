@@ -1,6 +1,0 @@
-{
-  "name": "A Viagem do Lanche - Roteiro & Jogo Interativo Inclusivo",
-  "description": "Sistema interativo inclusivo e roteiro pedagógico sobre o sistema digestório para crianças e adolescentes neurodivergentes (TEA, TDAH e TOC).",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

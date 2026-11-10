@@ -1,6 +1,6 @@
 # Estrutura Oficial de Assets (public/assets/)
 
-Este diretório contém os assets estáticos da plataforma **Conhecendo Meu Corpo Por Dentro** organizados segundo a governança estabelecida no Segundo Cérebro do projeto.
+Este diretório contém os assets estáticos do projeto **A Viagem do Alimento**.
 
 ---
 

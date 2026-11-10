@@ -12,12 +12,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { FoodId } from '../FoodSelector';
-import { ActiveScreen } from '../StageProgressBar';
+import { ActiveScreen } from '../../data/etapas';
 import {
   detectSoftwareGl,
   scheduleAfterDraw,
   createRadialContactShadowTexture,
-  createStudioFloorDialTexture
 } from './webglUtils';
 import { loadAllProposta1HD2DAssets, LoadedHD2DAssetPack } from './pixelAssetLoader';
 import {
@@ -70,21 +69,20 @@ export interface Proposta1HD2DSceneProps {
 // Helpers matemáticos pré-alocados no escopo do módulo (Zero GC no loop)
 const _camGoal = new THREE.Vector3();
 const _targetGoal = new THREE.Vector3();
-const _bgColor = new THREE.Color();
 
 const STAGE_CAMERAS: Record<
   StageId,
   { pos: [number, number, number]; target: [number, number, number] }
 > = {
-  food_select: { pos: [0, 1.48, 2.85], target: [0, 0.72, 0] },
-  first_bite: { pos: [0.32, 1.38, 2.48], target: [0.02, 0.76, 0.04] },
-  mouth: { pos: [0, 1.22, 2.45], target: [0, 0.95, 0] },
-  swallow: { pos: [0, 1.15, 2.55], target: [0, 0.95, 0] },
-  esophagus: { pos: [0, 1.18, 2.65], target: [0, 0.98, 0] },
-  stomach: { pos: [0, 1.12, 2.55], target: [0, 0.9, 0] },
-  small_intestine: { pos: [0, 1.28, 2.55], target: [0, 0.78, 0] },
-  large_intestine: { pos: [0, 1.12, 2.65], target: [0, 0.92, 0] },
-  final_ordering: { pos: [0, 1.12, 2.95], target: [0, 0.96, 0] }
+  food_select: { pos: [0, 1.38, 2.35], target: [0, 0.7, 0] },
+  first_bite: { pos: [0.28, 1.3, 2.1], target: [0.02, 0.76, 0.04] },
+  mouth: { pos: [0, 1.18, 2.05], target: [0, 0.95, 0] },
+  swallow: { pos: [0, 1.12, 2.1], target: [0, 0.95, 0] },
+  esophagus: { pos: [0, 1.15, 2.2], target: [0, 0.98, 0] },
+  stomach: { pos: [0, 1.1, 2.1], target: [0, 0.9, 0] },
+  small_intestine: { pos: [0, 1.22, 2.1], target: [0, 0.78, 0] },
+  large_intestine: { pos: [0, 1.1, 2.2], target: [0, 0.92, 0] },
+  final_ordering: { pos: [0, 1.1, 2.5], target: [0, 0.96, 0] }
 };
 
 export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) => {
@@ -117,6 +115,7 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     try {
       renderer = new THREE.WebGLRenderer({
         antialias: !isSoftwareGl,
+        alpha: true,
         powerPreference: 'high-performance'
       });
     } catch {
@@ -147,23 +146,24 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     renderer.domElement.addEventListener('webglcontextrestored', onContextRestored);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5efeb);
-    scene.fog = new THREE.Fog(0xf5efeb, 7.5, 20);
+    // o fundo é o gradiente CSS do palco (.palco-3d); a cena fica transparente
+    scene.background = null;
+    renderer.setClearColor(0x000000, 0);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
     const envMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = envMap;
     pmrem.dispose();
 
-    const camera = new THREE.PerspectiveCamera(42, initW / initH, 0.1, 40);
+    const camera = new THREE.PerspectiveCamera(40, initW / initH, 0.1, 40);
     camera.position.set(...STAGE_CAMERAS[propsRef.current.stage].pos);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = !isSoftwareGl;
     controls.dampingFactor = 0.06;
     controls.target.set(...STAGE_CAMERAS[propsRef.current.stage].target);
-    controls.minDistance = 1.4;
-    controls.maxDistance = 5.0;
+    controls.minDistance = 1.0;
+    controls.maxDistance = 3.6;
     controls.minPolarAngle = Math.PI * 0.12;
     controls.maxPolarAngle = Math.PI * 0.54;
     controls.enablePan = false;
@@ -220,8 +220,8 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     scene.add(baseGroup);
 
     const floorMesh = new THREE.Mesh(
-      trackGeo(new THREE.CircleGeometry(9, 48)).rotateX(-Math.PI / 2),
-      trackMat(new THREE.MeshStandardMaterial({ color: 0xd6c7b6, roughness: 0.88, metalness: 0.02 }))
+      trackGeo(new THREE.CircleGeometry(2.6, 64)).rotateX(-Math.PI / 2),
+      trackMat(new THREE.MeshStandardMaterial({ color: 0xe9dfd2, roughness: 0.95, metalness: 0, transparent: true, opacity: 0.55 }))
     );
     floorMesh.position.y = -0.08;
     floorMesh.receiveShadow = true;
@@ -248,24 +248,6 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
     );
     pedestalTrim.position.y = -0.004;
     baseGroup.add(pedestalTrim);
-
-    const dialTex = createStudioFloorDialTexture(renderer);
-    extraTextures.push(dialTex);
-    const dialPlane = new THREE.Mesh(
-      trackGeo(new THREE.PlaneGeometry(3.3, 3.3)).rotateX(-Math.PI / 2),
-      trackMat(
-        new THREE.MeshBasicMaterial({
-          map: dialTex,
-          transparent: true,
-          depthWrite: false,
-          polygonOffset: true,
-          polygonOffsetFactor: -1,
-          polygonOffsetUnits: -1
-        })
-      )
-    );
-    dialPlane.position.y = -0.075;
-    baseGroup.add(dialPlane);
 
     const shadowTex = createRadialContactShadowTexture(renderer);
     extraTextures.push(shadowTex);
@@ -480,13 +462,6 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
         simTime += dt;
       }
 
-      // Fundo calmo sincronizado com Baixo Estímulo (Opção A - Cozinha & Estúdio Acolhedor)
-      _bgColor.set(cur.lowSensory ? '#EDE4DA' : '#F5EFEB');
-      (scene.background as THREE.Color).lerp(_bgColor, 0.1);
-      if (scene.fog) {
-        scene.fog.color.copy(scene.background as THREE.Color);
-      }
-
       // Alterna visibilidade exclusiva da estação atual
       (Object.keys(stations) as StageId[]).forEach((k) => {
         stations[k].group.visible = k === cur.stage;
@@ -555,25 +530,23 @@ export const Proposta1HD2DScene3D: React.FC<Proposta1HD2DSceneProps> = (props) =
   }, []);
 
   return (
-    <div className="relative w-full h-full min-h-[440px] select-none overflow-hidden bg-slate-100">
-      <div ref={mountRef} className="w-full h-full" />
+    <div className="relative h-full w-full select-none overflow-hidden">
+      <div ref={mountRef} className="h-full w-full" />
 
       {/* Dica discreta de hover sobre elemento 3D clicável */}
       {hoverHint && webglReady && (
-        <div className="pointer-events-none absolute top-16 right-4 z-10 bg-slate-900/90 text-white px-3 py-1.5 rounded-lg text-xs font-medium shadow-xs">
+        <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-ameixa-900/90 px-3.5 py-1.5 text-xs font-medium text-white shadow-suave">
           {hoverHint}
         </div>
       )}
 
       {/* Fallback caso WebGL seja indisponível */}
       {!webglReady && (
-        <div className="absolute inset-0 flex items-center justify-center p-6 bg-slate-100 text-center">
-          <div className="max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-            <h3 className="text-base font-bold text-slate-900 mb-2">
-              Modo Visual Simplificado Ativo
-            </h3>
-            <p className="text-sm text-slate-600">
-              Use os controles na barra inferior para acompanhar todas as etapas da Viagem do Alimento com conforto.
+        <div className="absolute inset-0 flex items-center justify-center p-6 text-center">
+          <div className="cartao max-w-md p-6">
+            <h3 className="mb-2 text-base font-bold">A cena 3D não pôde abrir neste navegador</h3>
+            <p className="text-sm text-ameixa-700">
+              Tudo bem: dá para seguir a viagem inteira pelo painel ao lado, parada por parada.
             </p>
           </div>
         </div>

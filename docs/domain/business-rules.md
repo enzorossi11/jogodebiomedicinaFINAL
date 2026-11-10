@@ -8,7 +8,7 @@ Este documento define as regras que regem a lógica das atividades, interações
 
 ### RN-A01: Sem Bloqueio de Navegação
 - **Descrição:** O usuário nunca pode ficar "preso" em uma estação esperando uma ação obrigatória.
-- **Implementação:** Os botões **"Voltar"** e **"Próximo órgão"** no dock de navegação devem permanecer habilitados em 100% do tempo.
+- **Implementação:** Os botões **"Voltar"** e **"Próxima parada"** do painel devem permanecer habilitados em 100% do tempo.
 - **Justificativa:** Crianças com TEA ou ansiedade podem se desregular se forem forçadas a executar tarefas sob pressão.
 
 ### RN-A02: Modo "Observar Sem Tocar"
